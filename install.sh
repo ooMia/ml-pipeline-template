@@ -23,6 +23,7 @@ function main() {
     pip install -U PyYAML -q
     pip install -U pytest -q
     pip install -U pytest-cov -q
+    pip install mysql-connector-python -q
     pip freeze --require-virtualenv > requirements.txt
     echo "installed successfully"
 }

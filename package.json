@@ -4,7 +4,7 @@
   "scripts": {
     "preinstall": "corepack enable",
     "install": "bash install.sh",
-    "test": "pytest --sw --nf",
+    "test": "pytest --sw --nf -v --show-capture=stdout",
     "coverage": "pytest --cov=.",
     "prepare": "husky",
     "format": "prettier --write ."
