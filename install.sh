@@ -38,6 +38,3 @@ done
 
 set -e
 main
-
-
-
