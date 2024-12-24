@@ -1,6 +1,6 @@
 {
   "name": "toy-job-finder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "preinstall": "corepack enable",
     "install": "bash install.sh",
@@ -19,5 +19,5 @@
     "husky": "^9.1.7",
     "prettier": "^3.4.2"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@9.15.1"
 }

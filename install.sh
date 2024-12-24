@@ -23,7 +23,9 @@ function main() {
     pip install -U PyYAML -q
     pip install -U pytest -q
     pip install -U pytest-cov -q
-    pip install mysql-connector-python -q
+    pip install selenium -q
+    pip install beautifulsoup4 -q
+    pip install pyautogui -q
     pip freeze --require-virtualenv > requirements.txt
     echo "installed successfully"
 }
