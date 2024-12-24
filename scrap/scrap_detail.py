@@ -1,4 +1,5 @@
 class DetailScraper:
+    from selenium.webdriver.remote.webelement import WebElement
     from scrap import SCRAP_DETAIL_SAMPLE_URL
 
     def __init__(self, url: str = SCRAP_DETAIL_SAMPLE_URL):
@@ -16,13 +17,13 @@ class DetailScraper:
         self.__scrap_corp_investment()
         self.__scrap_corp_recruit()
 
-    def __find_element_by(self, method: str, at: str):
+    def __find_element_by(self, method: str, at: str) -> WebElement:
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions
         by = getattr(By, method)
         return self.wait.until(expected_conditions.presence_of_element_located((by, at)))
 
-    def __find_element_by_selector(self, selector: str):
+    def __find_element_by_selector(self, selector: str) -> WebElement or None:
         from selenium.common import TimeoutException
         try:
             element = self.__find_element_by('CSS_SELECTOR', selector)
@@ -73,8 +74,32 @@ class DetailScraper:
         }
 
     def __scrap_corp_recruit(self):
+        def __click_load_button():
+            while True:
+                button = self.__find_element_by_selector("#section-recruit > div > div > div > div > div > button")
+                if button is None:
+                    break
+                self.driver.execute_script("arguments[0].click();", button)
+
+        def __parse_html(raw_html):
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(raw_html, 'html.parser')
+            li_tags = soup.find_all('li')
+
+            result = []
+            for li in li_tags:
+                li_dict = {
+                    "href": li.find('a')['href'],
+                    "name": li.find('h1').text,
+                    "incentive": li.find('p').text,
+                    "type": li.find('span').text
+                }
+                result.append(li_dict)
+            return result
+
+        __click_load_button()
         e = self.__find_element_by_selector("#section-recruit")
-        self.recruit = e.text if e is not None else None
+        self.recruit = __parse_html(e.get_attribute('outerHTML')) if e is not None else None
 
 
 if __name__ == '__main__':

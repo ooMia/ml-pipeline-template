@@ -14,5 +14,10 @@ def test_keywords():
     assert len(scraper.keywords) > 0
 
 
-def test_hiring():
-    assert scraper.recruit is not None
+def test_recruit():
+    if scraper.recruit:
+        assert len(scraper.recruit) > 0
+        assert scraper.recruit[0].get('href') is not None
+        assert scraper.recruit[0].get('name') is not None
+        assert scraper.recruit[0].get('incentive') is not None
+        assert scraper.recruit[0].get('type') is not None
