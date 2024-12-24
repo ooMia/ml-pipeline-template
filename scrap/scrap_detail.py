@@ -30,13 +30,20 @@ class DetailScraper:
 
     def _login(self):
         from scrap import SCRAP_LOGIN_URL, SCRAP_LOGIN_USER_ID, SCRAP_LOGIN_USER_PW
+        from selenium.common import TimeoutException
+
         self.driver.get(SCRAP_LOGIN_URL)
         self._find_element_by('NAME', 'email').send_keys(SCRAP_LOGIN_USER_ID)
         self._find_element_by('NAME', 'password').send_keys(SCRAP_LOGIN_USER_PW)
 
-        import pyautogui
-        pyautogui.moveTo(600, 797)  # print(pyautogui.position())
-        pyautogui.click()
+        try:
+            self._find_element_by('CSS_SELECTOR', 'main form').submit()
+        except TimeoutException:
+            import pyautogui
+            pyautogui.moveTo(600, 797)  # print(pyautogui.position())
+            pyautogui.click()
+
+        self.wait.until(lambda check: self._is_login())
 
     def scrap_corp_keywords(self) -> list:
         from scrap import SCRAP_DETAIL_CORP_FIELD_XPATH
