@@ -1,4 +1,4 @@
-from scrap.scrap_detail import DetailScraper
+from scrap.DetailScraper import DetailScraper
 
 scraper = DetailScraper()
 
