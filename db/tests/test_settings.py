@@ -23,7 +23,3 @@ def test_initial_connection():
             database=MYSQL_DATABASE
     ) as conn:
         assert conn.is_connected()
-
-
-def test_store_and_load():
-    print('DB 저장 및 로드 테스트')

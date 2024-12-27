@@ -1,10 +1,10 @@
 def main():
-    from scrape import SCRAP_BASE_URL
+    from scrape import SCRAPE_BASE_URL
     from scrape.DetailScraper import DetailScraper
     from scrape.Crawler import Crawler
     crawler = Crawler()
     page_max = 1
-    base_url = SCRAP_BASE_URL
+    base_url = SCRAPE_BASE_URL
     from selenium import webdriver
     from scrape import driver_options
     driver = webdriver.Chrome(options=driver_options)
