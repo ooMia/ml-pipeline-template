@@ -38,7 +38,7 @@ def test_error_on_non_exist_company(db_connection):
 
 def test_example(db_connection):
     from db.CompanyDB import CompanyDB
-    from scrape.models import Company
+    from scrape.model import Company
     db = CompanyDB(db_connection)
     result: Company = db.load_company_by_name("쿠팡")
     assert result.id == "CP00000055"

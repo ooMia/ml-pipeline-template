@@ -1,6 +1,3 @@
-from scrape.models import Company, CompanyInvestment, CompanyRecruit, CompanyRecruitDetail
-
-
 class CompanyDB:
     def __init__(self, conn=None):
         import mysql.connector
@@ -61,6 +58,7 @@ class CompanyDB:
         )
         self.conn.commit()
 
+    from scrape.model import Company
     def store_company(self, comp: Company):
         # current timestamp
 
@@ -100,6 +98,7 @@ class CompanyDB:
         self.conn.commit()
 
     def load_company_by_name(self, name: str) -> Company or None:
+        from scrape.model import Company, CompanyRecruitDetail, CompanyRecruit, CompanyInvestment
         cursor = self.conn.cursor()
         cursor.execute(
             "SELECT * FROM company WHERE name = %s",
@@ -139,6 +138,7 @@ class CompanyDB:
 
 if __name__ == "__main__":
     from scrape import SCRAPE_DETAIL_SAMPLE_URL
+    from scrape.model import Company
 
     db = CompanyDB()
     db.store_company(
