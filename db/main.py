@@ -1,8 +1,22 @@
-def test_connection():
-    print('DB 연결 테스트')
+class Database:
+    def __init__(self):
+        import mysql.connector
+        from db import MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE, MYSQL_PORT, MYSQL_HOST
+        self.conn = mysql.connector.connect(
+            host=MYSQL_HOST,
+            port=MYSQL_PORT,
+            user=MYSQL_USER,
+            password=MYSQL_PASSWORD,
+            database=MYSQL_DATABASE
+        )
 
+    def store(self):
+        # TODO: Implement
+        pass
 
-# 스크립트를 실행하려면 여백의 녹색 버튼을 누릅니다.
-if __name__ == '__main__':
-    test_connection()
-    # /usr/local/bin/docker compose -f /Users/mia/PycharmProjects/toy-job-finder/docker-compose.yaml -p toy-job-finder up -d
+    def load(self):
+        # TODO: Implement
+        pass
+
+    def __del__(self):
+        self.conn.close()

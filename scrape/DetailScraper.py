@@ -1,18 +1,20 @@
 class DetailScraper:
     from selenium.webdriver.remote.webelement import WebElement
-    from scrap import SCRAP_DETAIL_SAMPLE_URL
+    from scrape import SCRAPE_DETAIL_SAMPLE_URL
 
-    def __init__(self, url: str = SCRAP_DETAIL_SAMPLE_URL):
+    def __init__(self, url: str = SCRAPE_DETAIL_SAMPLE_URL, driver=None):
         from selenium import webdriver
         from selenium.webdriver.support.wait import WebDriverWait
-        from scrap import driver_options
+        from scrape import driver_options
 
-        self.driver = webdriver.Chrome(options=driver_options)
-        self.wait = WebDriverWait(self.driver, 3)
+        self.__driver = driver
+        if driver is None:
+            self.__driver = webdriver.Chrome(options=driver_options)
+        self.__wait = WebDriverWait(self.__driver, 3)
 
         if not self.__is_login():
             self.__login()
-        self.driver.get(url)
+        self.__driver.get(url)
         self.__scrap_corp_keywords()
         self.__scrap_corp_investment()
         self.__scrap_corp_recruit()
@@ -21,13 +23,13 @@ class DetailScraper:
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions
         by = getattr(By, method)
-        return self.wait.until(expected_conditions.presence_of_element_located((by, at)))
+        return self.__wait.until(expected_conditions.presence_of_element_located((by, at)))
 
     def __find_element_by_selector(self, selector: str) -> WebElement or None:
         from selenium.common import TimeoutException
         try:
             element = self.__find_element_by('CSS_SELECTOR', selector)
-            self.driver.execute_script(f"document.querySelector('{selector}').scrollIntoView();")
+            self.__driver.execute_script(f"document.querySelector('{selector}').scrollIntoView();")
             return element
         except TimeoutException:
             return None
@@ -35,17 +37,17 @@ class DetailScraper:
     def __is_login(self):
         from selenium.common import JavascriptException
         try:
-            return self.driver.execute_script("return window.localStorage.getItem('accessToken')") is not None
+            return self.__driver.execute_script("return window.localStorage.getItem('accessToken')") is not None
         except JavascriptException:
             return False
 
     def __login(self):
-        from scrap import SCRAP_LOGIN_URL, SCRAP_LOGIN_USER_ID, SCRAP_LOGIN_USER_PW
+        from scrape import SCRAPE_LOGIN_URL, SCRAPE_LOGIN_USER_ID, SCRAPE_LOGIN_USER_PW
         from selenium.common import TimeoutException
 
-        self.driver.get(SCRAP_LOGIN_URL)
-        self.__find_element_by('NAME', 'email').send_keys(SCRAP_LOGIN_USER_ID)
-        self.__find_element_by('NAME', 'password').send_keys(SCRAP_LOGIN_USER_PW)
+        self.__driver.get(SCRAPE_LOGIN_URL)
+        self.__find_element_by('NAME', 'email').send_keys(SCRAPE_LOGIN_USER_ID)
+        self.__find_element_by('NAME', 'password').send_keys(SCRAPE_LOGIN_USER_PW)
 
         try:
             self.__find_element_by('CSS_SELECTOR', 'main form').submit()
@@ -54,16 +56,16 @@ class DetailScraper:
             pyautogui.moveTo(600, 797)  # print(pyautogui.position())
             pyautogui.click()
 
-        self.wait.until(lambda check: self.__is_login())
+        self.__wait.until(lambda check: self.__is_login())
 
     def __scrap_corp_keywords(self):
-        from scrap import SCRAP_DETAIL_CORP_FIELD_XPATH
-        element = self.__find_element_by('XPATH', SCRAP_DETAIL_CORP_FIELD_XPATH)
+        from scrape import SCRAPE_DETAIL_CORP_FIELD_XPATH
+        element = self.__find_element_by('XPATH', SCRAPE_DETAIL_CORP_FIELD_XPATH)
         self.keywords = element.text.split('\n')[::2]
 
     def __scrap_corp_investment(self):
-        from scrap import SCRAP_DETAIL_INVESTMENT_SELECTOR
-        raw_text = self.__find_element_by_selector(SCRAP_DETAIL_INVESTMENT_SELECTOR).text
+        from scrape import SCRAPE_DETAIL_INVESTMENT_SELECTOR
+        raw_text = self.__find_element_by_selector(SCRAPE_DETAIL_INVESTMENT_SELECTOR).text
 
         import re
         self.investment = {
@@ -79,7 +81,7 @@ class DetailScraper:
                 button = self.__find_element_by_selector("#section-recruit > div > div > div > div > div > button")
                 if button is None:
                     break
-                self.driver.execute_script("arguments[0].click();", button)
+                self.__driver.execute_script("arguments[0].click();", button)
 
         def __parse_html(raw_html):
             from bs4 import BeautifulSoup
@@ -107,3 +109,4 @@ if __name__ == '__main__':
     print(detail_scraper.keywords)
     print(detail_scraper.investment)
     print(detail_scraper.recruit)
+    print(len(detail_scraper.recruit))

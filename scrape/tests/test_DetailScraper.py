@@ -1,4 +1,4 @@
-from scrap.DetailScraper import DetailScraper
+from scrape.DetailScraper import DetailScraper
 
 scraper = DetailScraper()
 
@@ -15,9 +15,9 @@ def test_keywords():
 
 
 def test_recruit():
-    if scraper.recruit:
-        assert len(scraper.recruit) > 0
-        assert scraper.recruit[0].get('href') is not None
-        assert scraper.recruit[0].get('name') is not None
-        assert scraper.recruit[0].get('incentive') is not None
-        assert scraper.recruit[0].get('type') is not None
+    # assume default url contains recruit data
+    assert len(scraper.recruit) > 0
+    assert scraper.recruit[0].get('href') is not None
+    assert scraper.recruit[0].get('name') is not None
+    assert scraper.recruit[0].get('incentive') is not None
+    assert scraper.recruit[0].get('type') is not None
