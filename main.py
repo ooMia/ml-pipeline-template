@@ -1,19 +1,23 @@
 def main():
-    from scrape import SCRAPE_BASE_URL
+    from selenium import webdriver
+    from scrape import SCRAPE_CUR_PAGE, SCRAPE_BASE_URL, driver_options
     from scrape.DetailScraper import DetailScraper
     from scrape.Crawler import Crawler
-    crawler = Crawler()
-    page_max = 1
-    base_url = SCRAPE_BASE_URL
-    from selenium import webdriver
-    from scrape import driver_options
+    from scrape.model import Company
+    from db.CompanyDB import CompanyDB
+
     driver = webdriver.Chrome(options=driver_options)
-    for page in range(1, page_max + 1):
-        for company in crawler.company_list_at(page):
-            detail_scraper = DetailScraper(base_url + company['href'], driver)
-            print(detail_scraper.keywords)
-            print(detail_scraper.investment)
-            print(detail_scraper.recruit)
+    cur_page = SCRAPE_CUR_PAGE
+    for page in range(1, cur_page + 1):
+        for company in Crawler().company_list_at(page):
+            url = SCRAPE_BASE_URL + company['href']
+            print(url)
+            ds = DetailScraper(url, driver)
+            c = Company.get_instance_by_href(url, ds)
+            CompanyDB().store_company(c)
+
+    from dotenv import set_key
+    set_key('.env', 'SCRAPE_CUR_PAGE', str((cur_page % 10) + 1))
 
 
 if __name__ == '__main__':

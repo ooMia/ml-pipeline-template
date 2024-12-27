@@ -1,4 +1,8 @@
 class CompanyDB:
+
+    def __del__(self):
+        self.conn.close()
+
     def __init__(self, conn=None):
         import mysql.connector
         from db import MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE, MYSQL_PORT, MYSQL_HOST
@@ -28,7 +32,8 @@ class CompanyDB:
             CREATE TABLE IF NOT EXISTS keyword (
                 company_id VARCHAR(255),
                 keyword VARCHAR(255),
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (company_id, keyword)
             )
             """
         )
@@ -131,9 +136,6 @@ class CompanyDB:
                 [CompanyRecruitDetail(recruit[1], recruit[2], recruit[3], recruit[4]) for recruit in recruits]
             )
         )
-
-    def __del__(self):
-        self.conn.close()
 
 
 if __name__ == "__main__":

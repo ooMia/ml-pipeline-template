@@ -7,9 +7,7 @@ class DetailScraper:
         from selenium.webdriver.support.wait import WebDriverWait
         from scrape import driver_options
 
-        self.__driver = driver
-        if driver is None:
-            self.__driver = webdriver.Chrome(options=driver_options)
+        self.__driver = webdriver.Chrome(options=driver_options) if driver is None else driver
         self.__wait = WebDriverWait(self.__driver, 3)
 
         if not self.__is_login():
@@ -22,8 +20,14 @@ class DetailScraper:
     def __find_element_by(self, method: str, at: str) -> WebElement:
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions
-        by = getattr(By, method)
-        return self.__wait.until(expected_conditions.presence_of_element_located((by, at)))
+        from selenium.common import StaleElementReferenceException
+        try:
+            by = getattr(By, method)
+            return self.__wait.until(expected_conditions.presence_of_element_located((by, at)))
+        except StaleElementReferenceException:
+            from time import sleep
+            sleep(1)
+            return self.__wait.until(expected_conditions.presence_of_element_located((by, at)))
 
     def __find_element_by_selector(self, selector: str) -> WebElement or None:
         from selenium.common import TimeoutException
@@ -76,32 +80,33 @@ class DetailScraper:
         }
 
     def __scrap_corp_recruit(self):
-        def __click_load_button():
-            while True:
-                button = self.__find_element_by_selector("#section-recruit > div > div > div > div > div > button")
-                if button is None:
-                    break
-                self.__driver.execute_script("arguments[0].click();", button)
-
-        def __parse_html(raw_html):
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(raw_html, 'html.parser')
-            li_tags = soup.find_all('li')
-
-            result = []
-            for li in li_tags:
-                li_dict = {
-                    "href": li.find('a')['href'],
-                    "name": li.find('h1').text,
-                    "incentive": li.find('p').text,
-                    "type": li.find('span').text
-                }
-                result.append(li_dict)
-            return result
-
-        __click_load_button()
+        self.__click_load_button()
         e = self.__find_element_by_selector("#section-recruit")
-        self.recruit = __parse_html(e.get_attribute('outerHTML')) if e is not None else None
+        self.recruit = self.__parse_html(e.get_attribute('outerHTML')) if e is not None else None
+
+    def __click_load_button(self):
+        while True:
+            button = self.__find_element_by_selector("#section-recruit > div > div > div > div > div > button")
+            if button is None:
+                break
+            self.__driver.execute_script("arguments[0].click();", button)
+
+    @staticmethod
+    def __parse_html(raw_html):
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(raw_html, 'html.parser')
+        li_tags = soup.find_all('li')
+
+        result = []
+        for li in li_tags:
+            li_dict = {
+                "href": "" if li.find('a') is None else li.find('a')['href'],
+                "name": "" if li.find('h1') is None else li.find('h1').text,
+                "incentive": "" if li.find('p') is None else li.find('p').text,
+                "type": "" if li.find('span') is None else li.find('span').text,
+            }
+            result.append(li_dict)
+        return result
 
 
 if __name__ == '__main__':

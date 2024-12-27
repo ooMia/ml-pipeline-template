@@ -33,6 +33,8 @@ class CompanyRecruit:
 
     @staticmethod
     def get_instance_by_scraper(ds: DetailScraper) -> 'CompanyRecruit':
+        if ds.recruit is None:
+            return CompanyRecruit([])
         __detail = [CompanyRecruitDetail(**d) for d in ds.recruit]
         return CompanyRecruit(__detail)
 
@@ -46,13 +48,14 @@ class Company:
     recruit: CompanyRecruit
 
     @staticmethod
-    def get_instance_by_href(href) -> 'Company':
+    def get_instance_by_href(href, ds: DetailScraper = None) -> 'Company':
         import urllib.parse
         __id = href.split('/')[-2]
         __name = urllib.parse.unquote(href.split('/')[-1])
 
         from scrape.DetailScraper import DetailScraper
-        ds = DetailScraper(href)
+        if ds is None:
+            ds = DetailScraper(href)
         __keyword = ds.keywords
         __investment = CompanyInvestment.get_instance_by_scraper(ds)
         __recruit = CompanyRecruit.get_instance_by_scraper(ds)
