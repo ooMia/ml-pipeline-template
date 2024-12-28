@@ -7,7 +7,9 @@ class DetailScraper:
         from selenium.webdriver.support.wait import WebDriverWait
         from scrape import driver_options
 
-        self.__driver = webdriver.Chrome(options=driver_options) if driver is None else driver
+        self.__driver = driver
+        if driver is None:
+            self.__driver = webdriver.Chrome(options=driver_options) if driver is None else driver
         self.__wait = WebDriverWait(self.__driver, 3)
 
         if not self.__is_login():

@@ -1,3 +1,6 @@
+import os
+
+
 def main():
     from selenium import webdriver
     from scrape import SCRAPE_CUR_PAGE, SCRAPE_BASE_URL, driver_options
@@ -8,7 +11,7 @@ def main():
 
     driver = webdriver.Chrome(options=driver_options)
     cur_page = SCRAPE_CUR_PAGE
-    for page in range(1, cur_page + 1):
+    for page in range(cur_page, cur_page + 1):
         for company in Crawler().company_list_at(page):
             url = SCRAPE_BASE_URL + company['href']
             print(url)
@@ -17,7 +20,10 @@ def main():
             CompanyDB().store_company(c)
 
     from dotenv import set_key
-    set_key('.env', 'SCRAPE_CUR_PAGE', str((cur_page % 10) + 1))
+    set_key(
+        os.path.join(os.path.dirname(__file__), '.env'),
+        'SCRAPE_CUR_PAGE',
+        str((cur_page % 10) + 1))
 
 
 if __name__ == '__main__':
