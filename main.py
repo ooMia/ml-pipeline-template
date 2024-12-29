@@ -4,10 +4,12 @@ def main():
     from scrape.Crawler import Crawler
     from scrape.model import Company
     from db.CompanyDB import CompanyDB
-    from selenium.webdriver import Firefox
+    from selenium.webdriver import Chrome
 
     cur_page = SCRAPE_CUR_PAGE
-    driver = Firefox(options=driver_options, )
+    driver_options.add_argument("--proxy-server=socks5://127.0.0.1:9050")
+    driver = Chrome(options=driver_options, )
+    
     for page in range(cur_page, cur_page + 1):
         for company in Crawler(driver).company_list_at(page):
             url = SCRAPE_BASE_URL + company['href']
@@ -23,6 +25,15 @@ def main():
         'SCRAPE_CUR_PAGE',
         str((cur_page % 10) + 1))
 
+    driver.close()
+
+
+def enable_tor():
+    # execute tor
+    import subprocess
+    subprocess.Popen(['tor'])
+
 
 if __name__ == '__main__':
+    enable_tor()
     main()

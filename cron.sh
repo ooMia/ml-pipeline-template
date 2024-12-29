@@ -13,9 +13,5 @@ else
 fi
 
 # 3. 실행
-if ! pgrep -x "tor" > /dev/null
-then
-    tor
-fi
 source "$DIR/.venv/bin/activate"
 python3 "$DIR/main.py"

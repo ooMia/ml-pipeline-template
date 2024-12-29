@@ -24,9 +24,8 @@ GUI_BASE_Y: int = int(os.getenv('GUI_BASE_Y'))
 GUI_BASE_WIDTH: int = int(os.getenv('GUI_BASE_WIDTH'))
 GUI_BASE_HEIGHT: int = int(os.getenv('GUI_BASE_HEIGHT'))
 
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 
 driver_options = Options()
-driver_options.add_argument("--proxy-server=socks5://127.0.0.1:9050")
 driver_options.add_argument(f"--window-position={GUI_BASE_X},{GUI_BASE_Y}")
 driver_options.add_argument(f"--window-size={GUI_BASE_WIDTH},{GUI_BASE_HEIGHT}")

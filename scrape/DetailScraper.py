@@ -7,7 +7,7 @@ class DetailScraper:
         from selenium.webdriver.support.wait import WebDriverWait
         from scrape import driver_options
 
-        self.__driver = driver if driver is not None else webdriver.Firefox(options=driver_options)
+        self.__driver = driver if driver is not None else webdriver.Chrome(options=driver_options)
         self.__wait = WebDriverWait(self.__driver, 3)
 
         # TODO: disable login -> use tor browser

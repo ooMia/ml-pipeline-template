@@ -7,7 +7,7 @@ class Crawler:
         from scrape import driver_options, SCRAPE_INITIAL_URL
 
         self.__init_url = SCRAPE_INITIAL_URL
-        self.__driver = driver if driver is not None else webdriver.Firefox(options=driver_options)
+        self.__driver = driver if driver is not None else webdriver.Chrome(options=driver_options)
         self.__wait = WebDriverWait(self.__driver, 3)
 
     def __find_element_by(self, method: str, at: str) -> WebElement:
