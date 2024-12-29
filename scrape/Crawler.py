@@ -1,13 +1,13 @@
 class Crawler:
     from selenium.webdriver.remote.webelement import WebElement
 
-    def __init__(self):
+    def __init__(self, driver=None):
         from selenium import webdriver
         from selenium.webdriver.support.wait import WebDriverWait
         from scrape import driver_options, SCRAPE_INITIAL_URL
 
         self.__init_url = SCRAPE_INITIAL_URL
-        self.__driver = webdriver.Chrome(options=driver_options)
+        self.__driver = driver if driver is not None else webdriver.Firefox(options=driver_options)
         self.__wait = WebDriverWait(self.__driver, 3)
 
     def __find_element_by(self, method: str, at: str) -> WebElement:

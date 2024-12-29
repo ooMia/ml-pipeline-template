@@ -7,11 +7,10 @@ class DetailScraper:
         from selenium.webdriver.support.wait import WebDriverWait
         from scrape import driver_options
 
-        self.__driver = driver
-        if driver is None:
-            self.__driver = webdriver.Chrome(options=driver_options) if driver is None else driver
+        self.__driver = driver if driver is not None else webdriver.Firefox(options=driver_options)
         self.__wait = WebDriverWait(self.__driver, 3)
 
+        # TODO: disable login -> use tor browser
         if not self.__is_login():
             self.__login()
         self.__driver.get(url)
@@ -74,11 +73,16 @@ class DetailScraper:
         raw_text = self.__find_element_by_selector(SCRAPE_DETAIL_INVESTMENT_SELECTOR).text
 
         import re
+        search_update = re.search(r"업데이트 : (.+)", raw_text)
+        search_stage = re.search(r"최종투자단계\n(.+)", raw_text)
+        search_amount = re.search(r"누적투자유치금액\n(.+)", raw_text)
+        search_count = re.search(r"투자유치건수\n(.+)", raw_text)
+
         self.investment = {
-            "update": re.search(r"업데이트 : (.+)", raw_text).group(1),
-            "stage": re.search(r"최종투자단계\n(.+)", raw_text).group(1),
-            "amount": re.search(r"누적투자유치금액\n(.+)", raw_text).group(1),
-            "count": re.search(r"투자유치건수\n(.+)", raw_text).group(1),
+            "update": search_update.group(1) if search_update else None,
+            "stage": search_stage.group(1) if search_stage else None,
+            "amount": search_amount.group(1) if search_amount else None,
+            "count": search_count.group(1) if search_count else None,
         }
 
     def __scrap_corp_recruit(self):
